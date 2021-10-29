@@ -1,4 +1,6 @@
 use crate::actually_private::Private;
+#[cfg(any(feature = "c++17", feature = "c++20"))]
+use crate::CxxStringView;
 use alloc::borrow::Cow;
 use alloc::string::String;
 use core::cmp::Ordering;
@@ -136,6 +138,17 @@ impl CxxString {
     /// it as a Rust &amp;str, otherwise an error.
     pub fn to_str(&self) -> Result<&str, Utf8Error> {
         str::from_utf8(self.as_bytes())
+    }
+
+    /// Constructs a string view containing the entire contents of this string.
+    ///
+    /// Matches the behavior of C++ [std::string::operator string_view][conversion].
+    /// Unlike in C++, Rust will ensure the view does not outlive this string.
+    ///
+    /// [conversion]: https://en.cppreference.com/w/cpp/string/basic_string/operator_basic_string_view
+    #[cfg(any(feature = "c++17", feature = "c++20"))]
+    pub fn to_string_view(&self) -> CxxStringView {
+        CxxStringView::new(self.as_bytes())
     }
 
     /// If the contents of the C++ string are valid UTF-8, this function returns

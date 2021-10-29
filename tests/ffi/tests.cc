@@ -7,6 +7,9 @@
 #include <numeric>
 #include <stdexcept>
 #include <string>
+#if defined(__cpp_lib_string_view)
+#include <string_view>
+#endif  // defined(__cpp_lib_string_view)
 #include <tuple>
 
 extern "C" void cxx_test_suite_set_correct() noexcept;
@@ -328,6 +331,14 @@ void c_take_rust_string(rust::String s) {
     cxx_test_suite_set_correct();
   }
 }
+#if defined(__cpp_lib_string_view)
+std::string_view c_round_trip_string_view(std::string_view sv) {
+  if (sv == "Hello from Rust!") {
+    cxx_test_suite_set_correct();
+  }
+  return "Hello from C++!";
+}
+#endif  // defined(__cpp_lib_string_view)
 
 void c_take_unique_ptr_string(std::unique_ptr<std::string> s) {
   if (*s == "2020") {

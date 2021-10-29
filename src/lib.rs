@@ -418,6 +418,9 @@ mod rust_vec;
 mod shared_ptr;
 #[path = "cxx_string.rs"]
 mod string;
+#[path = "cxx_string_view.rs"]
+#[cfg(any(feature = "c++17", feature = "c++20"))]
+mod string_view;
 mod symbols;
 mod type_id;
 mod unique_ptr;
@@ -430,6 +433,8 @@ pub use crate::exception::Exception;
 pub use crate::extern_type::{kind, ExternType};
 pub use crate::shared_ptr::SharedPtr;
 pub use crate::string::CxxString;
+#[cfg(any(feature = "c++17", feature = "c++20"))]
+pub use crate::string_view::CxxStringView;
 pub use crate::unique_ptr::UniquePtr;
 pub use crate::weak_ptr::WeakPtr;
 pub use cxxbridge_macro::bridge;
@@ -440,6 +445,10 @@ pub use cxxbridge_macro::bridge;
 /// shouldn't import this type with `use`. Instead, write `cxx::String`, or
 /// import and use `CxxString`.
 pub type String = CxxString;
+
+/// Synonym for `CxxStringView`.
+#[cfg(any(feature = "c++17", feature = "c++20"))]
+pub type StringView<'a> = CxxStringView<'a>;
 
 /// Synonym for `CxxVector`.
 ///

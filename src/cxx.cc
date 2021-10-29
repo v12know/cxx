@@ -3,6 +3,11 @@
 #include <iostream>
 #include <memory>
 
+#if defined(__cpp_lib_string_view)
+#include <string_view>
+#endif  // defined(__cpp_lib_string_view)
+
+// CxxString
 extern "C" {
 void cxxbridge1$cxx_string$init(std::string *s, const std::uint8_t *ptr,
                                 std::size_t len) noexcept {
@@ -33,6 +38,22 @@ void cxxbridge1$cxx_string$push(std::string &s, const std::uint8_t *ptr,
                                 std::size_t len) noexcept {
   s.append(reinterpret_cast<const char *>(ptr), len);
 }
+
+#if defined(__cpp_lib_string_view)
+// CxxStringView
+void cxxbridge1$cxx_string_view$init(std::string_view *s, const std::uint8_t *data,
+                                std::size_t len) noexcept {
+  new (s) std::string_view(reinterpret_cast<const char *>(data), len);
+}
+
+const char *cxxbridge1$cxx_string_view$data(const std::string_view& s) noexcept {
+  return s.data();
+}
+
+std::size_t cxxbridge1$cxx_string_view$length(const std::string_view& s) noexcept {
+  return s.length();
+}
+#endif  // defined(__cpp_lib_string_view)
 
 // rust::String
 void cxxbridge1$string$new(rust::String *self) noexcept;
@@ -507,6 +528,12 @@ static_assert(alignof(std::string) <= alignof(void *),
               "unexpectedly large std::string alignment");
 static_assert(sizeof(std::string) <= kMaxExpectedWordsInString * sizeof(void *),
               "unexpectedly large std::string size");
+#if defined(__cpp_lib_string_view)
+static_assert(alignof(std::string_view) <= alignof(void *),
+              "unexpectedly large std::string_view alignment");
+static_assert(sizeof(std::string_view) == 2 * sizeof(std::size_t),
+              "unexpected std::string_view size");
+#endif  // defined(__cpp_lib_string_view)
 } // namespace
 
 #define STD_VECTOR_OPS(RUST_TYPE, CXX_TYPE)                                    \

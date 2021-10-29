@@ -137,6 +137,8 @@ pub mod ffi {
         fn c_take_slice_r(s: &[R]);
         fn c_take_slice_r_sort(s: &mut [R]);
         fn c_take_rust_string(s: String);
+        #[cfg(any(feature="c++17", feature="c++20"))]
+        fn c_round_trip_string_view(sv: cxx::CxxStringView) -> cxx::CxxStringView;
         fn c_take_unique_ptr_string(s: UniquePtr<CxxString>);
         fn c_take_unique_ptr_vector_u8(v: UniquePtr<CxxVector<u8>>);
         fn c_take_unique_ptr_vector_f64(v: UniquePtr<CxxVector<f64>>);

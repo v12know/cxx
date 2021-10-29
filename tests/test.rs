@@ -367,3 +367,12 @@ fn test_raw_ptr() {
     assert_eq!(2025, unsafe { ffi::c_take_const_ptr(c3) });
     assert_eq!(2025, unsafe { ffi::c_take_mut_ptr(c3 as *mut ffi::C) }); // deletes c3
 }
+
+#[cfg(any(feature="c++17", feature="c++20"))]
+#[test]
+fn test_round_trip_string_view() {
+    let hello = b"Hello from Rust!";
+    let sv = cxx::CxxStringView::new(&hello);
+    let from_cxx = ffi::c_round_trip_string_view(sv);
+    assert_eq!(&from_cxx, "Hello from C++!");
+}

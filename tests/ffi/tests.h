@@ -2,6 +2,9 @@
 #include "rust/cxx.h"
 #include <memory>
 #include <string>
+#if defined(__cpp_lib_string_view)
+#include <string_view>
+#endif  // defined(__cpp_lib_string_view)
 
 namespace A {
 struct AShared;
@@ -137,6 +140,9 @@ void c_take_slice_shared_sort(rust::Slice<Shared> s);
 void c_take_slice_r(rust::Slice<const R> s);
 void c_take_slice_r_sort(rust::Slice<R> s);
 void c_take_rust_string(rust::String s);
+#if defined(__cpp_lib_string_view)
+std::string_view c_round_trip_string_view(std::string_view sv);
+#endif  // defined(__cpp_lib_string_view)
 void c_take_unique_ptr_string(std::unique_ptr<std::string> s);
 void c_take_unique_ptr_vector_u8(std::unique_ptr<std::vector<uint8_t>> v);
 void c_take_unique_ptr_vector_f64(std::unique_ptr<std::vector<double>> v);
