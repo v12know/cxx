@@ -22,6 +22,7 @@ mod ffi {
         fn new_blobstore_client() -> UniquePtr<BlobstoreClient>;
         fn put(&self, parts: &mut MultiBuf) -> u64;
         fn tag(&self, blobid: u64, tag: &str);
+        fn tag1(&self, blobid: u64, tag: CxxStringView) -> CxxStringView;
         fn metadata(&self, blobid: u64) -> BlobMetadata;
     }
 }
@@ -52,6 +53,12 @@ fn main() {
 
     // Add a tag.
     client.tag(blobid, "rust");
+    // use cxx::let_cxx_string;
+    // let_cxx_string!(s = "c++");
+    // client.tag1(blobid, s.to_string_view());
+    let s = cxx::CxxStringView::new("c++");
+    let s2 = client.tag1(blobid, s);
+    println!("s2: {}", s2);
 
     // Read back the tags.
     let metadata = client.metadata(blobid);

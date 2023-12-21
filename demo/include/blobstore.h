@@ -13,6 +13,7 @@ public:
   BlobstoreClient();
   uint64_t put(MultiBuf &buf) const;
   void tag(uint64_t blobid, rust::Str tag) const;
+  std::string_view tag1(uint64_t blobid, std::string_view tag) const;
   BlobMetadata metadata(uint64_t blobid) const;
 
 private:

@@ -126,7 +126,7 @@ fn check_type_rust_vec(cx: &mut Check, ty: &Ty1) {
                 None | Some(Bool) | Some(Char) | Some(U8) | Some(U16) | Some(U32) | Some(U64)
                 | Some(Usize) | Some(I8) | Some(I16) | Some(I32) | Some(I64) | Some(Isize)
                 | Some(F32) | Some(F64) | Some(RustString) => return,
-                Some(CxxString) => {}
+                Some(CxxString) | Some(CxxStringView) => {}
             }
         }
         Type::Str(_) => return,
@@ -164,7 +164,7 @@ fn check_type_shared_ptr(cx: &mut Check, ptr: &Ty1) {
         match Atom::from(&ident.rust) {
             None | Some(Bool) | Some(U8) | Some(U16) | Some(U32) | Some(U64) | Some(Usize)
             | Some(I8) | Some(I16) | Some(I32) | Some(I64) | Some(Isize) | Some(F32)
-            | Some(F64) | Some(CxxString) => return,
+            | Some(F64) | Some(CxxString) | Some(CxxStringView) => return,
             Some(Char) | Some(RustString) => {}
         }
     } else if let Type::CxxVector(_) = &ptr.inner {
@@ -185,7 +185,7 @@ fn check_type_weak_ptr(cx: &mut Check, ptr: &Ty1) {
         match Atom::from(&ident.rust) {
             None | Some(Bool) | Some(U8) | Some(U16) | Some(U32) | Some(U64) | Some(Usize)
             | Some(I8) | Some(I16) | Some(I32) | Some(I64) | Some(Isize) | Some(F32)
-            | Some(F64) | Some(CxxString) => return,
+            | Some(F64) | Some(CxxString) | Some(CxxStringView) => return,
             Some(Char) | Some(RustString) => {}
         }
     } else if let Type::CxxVector(_) = &ptr.inner {
@@ -209,7 +209,7 @@ fn check_type_cxx_vector(cx: &mut Check, ptr: &Ty1) {
         match Atom::from(&ident.rust) {
             None | Some(U8) | Some(U16) | Some(U32) | Some(U64) | Some(Usize) | Some(I8)
             | Some(I16) | Some(I32) | Some(I64) | Some(Isize) | Some(F32) | Some(F64)
-            | Some(CxxString) => return,
+            | Some(CxxString) | Some(CxxStringView) => return,
             Some(Char) => { /* todo */ }
             Some(Bool) | Some(RustString) => {}
         }
@@ -221,7 +221,7 @@ fn check_type_cxx_vector(cx: &mut Check, ptr: &Ty1) {
 fn check_type_ref(cx: &mut Check, ty: &Ref) {
     if ty.mutable && !ty.pinned {
         if let Some(requires_pin) = match &ty.inner {
-            Type::Ident(ident) if ident.rust == CxxString || is_opaque_cxx(cx, &ident.rust) => {
+            Type::Ident(ident) if ident.rust == CxxString || ident.rust == CxxStringView || is_opaque_cxx(cx, &ident.rust) => {
                 Some(ident.rust.to_string())
             }
             Type::CxxVector(_) => Some("CxxVector<...>".to_owned()),
@@ -710,6 +710,8 @@ fn describe(cx: &mut Check, ty: &Type) -> String {
                 "opaque Rust type".to_owned()
             } else if Atom::from(&ident.rust) == Some(CxxString) {
                 "C++ string".to_owned()
+            } else if Atom::from(&ident.rust) == Some(CxxStringView) {
+                "C++ string_view".to_owned()
             } else if Atom::from(&ident.rust) == Some(Char) {
                 "C char".to_owned()
             } else {

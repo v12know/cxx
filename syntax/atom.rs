@@ -19,6 +19,7 @@ pub enum Atom {
     F32,
     F64,
     CxxString,
+    CxxStringView,
     RustString,
 }
 
@@ -45,6 +46,7 @@ impl Atom {
             "f32" => Some(F32),
             "f64" => Some(F64),
             "CxxString" => Some(CxxString),
+            "CxxStringView" => Some(CxxStringView),
             "String" => Some(RustString),
             _ => None,
         }
@@ -76,6 +78,7 @@ impl AsRef<str> for Atom {
             F32 => "f32",
             F64 => "f64",
             CxxString => "CxxString",
+            CxxStringView => "CxxStringView",
             RustString => "String",
         }
     }

@@ -210,6 +210,7 @@ fn pick_includes_and_builtins(out: &mut OutFile, apis: &[Api]) {
                 Some(Usize) => out.include.cstddef = true,
                 Some(Isize) => out.builtin.rust_isize = true,
                 Some(CxxString) => out.include.string = true,
+                Some(CxxStringView) => out.include.string_view = true,
                 Some(RustString) => out.builtin.rust_string = true,
                 Some(Bool) | Some(Char) | Some(F32) | Some(F64) | None => {}
             },
@@ -1325,6 +1326,7 @@ fn write_atom(out: &mut OutFile, atom: Atom) {
         F32 => write!(out, "float"),
         F64 => write!(out, "double"),
         CxxString => write!(out, "::std::string"),
+        CxxStringView => write!(out, "::std::string_view"),
         RustString => write!(out, "::rust::String"),
     }
 }

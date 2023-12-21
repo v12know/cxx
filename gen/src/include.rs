@@ -35,6 +35,7 @@ pub struct Includes<'a> {
     pub new: bool,
     pub stdexcept: bool,
     pub string: bool,
+    pub string_view: bool,
     pub type_traits: bool,
     pub utility: bool,
     pub vector: bool,
@@ -96,6 +97,7 @@ pub(super) fn write(out: &mut OutFile) {
         new,
         stdexcept,
         string,
+        string_view,
         type_traits,
         utility,
         vector,
@@ -145,6 +147,9 @@ pub(super) fn write(out: &mut OutFile) {
     }
     if string && !cxx_header {
         writeln!(out, "#include <string>");
+    }
+    if string_view && !cxx_header {
+        writeln!(out, "#include <string_view>");
     }
     if type_traits && !cxx_header {
         writeln!(out, "#include <type_traits>");

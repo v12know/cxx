@@ -51,6 +51,12 @@ void BlobstoreClient::tag(uint64_t blobid, rust::Str tag) const {
   impl->blobs[blobid].tags.emplace(tag);
 }
 
+std::string_view BlobstoreClient::tag1(uint64_t blobid,
+                                       std::string_view tag) const {
+  impl->blobs[blobid].tags.emplace(tag);
+  return tag;
+}
+
 // Retrieve metadata about a blob.
 BlobMetadata BlobstoreClient::metadata(uint64_t blobid) const {
   BlobMetadata metadata{};
